@@ -155,4 +155,24 @@ const coffeeCupsRate = computed(() => {
     padding: 5px;
   }
 }
+
+@media (max-width: 767px) {
+  .resource-bar {
+    flex-wrap: wrap;
+    padding: 8px 5px;
+  }
+
+  .resource {
+    width: 50%;
+    padding: 5px;
+  }
+
+  .resource-value {
+    font-size: 0.95rem;
+  }
+
+  .resource-rate {
+    font-size: 0.7rem;
+  }
+}
 </style>

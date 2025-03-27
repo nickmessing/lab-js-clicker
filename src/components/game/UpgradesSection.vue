@@ -178,4 +178,22 @@ h2 {
   font-style: italic;
   padding: 20px;
 }
+
+@media (max-width: 767px) {
+  .upgrade-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .upgrade-button {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .tab {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}
 </style>

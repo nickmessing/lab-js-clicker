@@ -25,7 +25,7 @@ import UpgradesSection from './UpgradesSection.vue'
 <style scoped>
 .game-container {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
@@ -46,7 +46,6 @@ import UpgradesSection from './UpgradesSection.vue'
 .left-section {
   flex: 1;
   padding: 20px;
-  overflow-y: auto;
   background-color: #e8e8e8;
 }
 
@@ -55,7 +54,6 @@ import UpgradesSection from './UpgradesSection.vue'
   display: flex;
   flex-direction: column;
   padding: 20px;
-  overflow-y: auto;
   background-color: #f0f0f0;
 }
 

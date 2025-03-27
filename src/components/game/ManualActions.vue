@@ -79,7 +79,6 @@ const formattedPourReward = useFormattedCurrency(() => gameStore.moneyPerCoffeeC
 .manual-actions {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 h2 {

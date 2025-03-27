@@ -105,7 +105,6 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  overflow-y: auto;
 }
 
 .automation-item {
@@ -161,5 +160,18 @@ h2 {
 
 .buy-button:disabled:hover {
   background-color: #bbbbbb;
+}
+
+@media (max-width: 767px) {
+  .automation-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .buy-button {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+  }
 }
 </style>
