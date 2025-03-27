@@ -399,17 +399,25 @@ export const useGameStore = defineStore('game', () => {
   }
 
   function beanBuyerTick() {
+    // Don't proceed if we can't afford beans or if adding would exceed capacity
     if (
       freshBeansPerTickPrice.value > gameState.value.money ||
-      freshBeans.value >= maximumFreshBeans.value
+      gameState.value.freshBeans + freshBeansPerTickFromBuyers.value > maximumFreshBeans.value
     )
       return
 
-    gameState.value.money -= freshBeansPerTickPrice.value
-    gameState.value.freshBeans = Math.min(
-      gameState.value.freshBeans + freshBeansPerTickFromBuyers.value,
-      maximumFreshBeans.value,
+    // If we'd exceed the maximum, only buy what would fit
+    const amountToBuy = Math.min(
+      freshBeansPerTickFromBuyers.value,
+      maximumFreshBeans.value - gameState.value.freshBeans,
     )
+
+    // Calculate adjusted cost for the actual amount we're buying
+    const adjustedCost =
+      (amountToBuy / freshBeansPerTickFromBuyers.value) * freshBeansPerTickPrice.value
+
+    gameState.value.money -= adjustedCost
+    gameState.value.freshBeans += amountToBuy
   }
 
   // Auto Roaster automation
@@ -433,24 +441,32 @@ export const useGameStore = defineStore('game', () => {
     gameState.value.autoRoasters += 1
   }
   function autoRoasterTick() {
-    if (
-      freshBeansPerTickForRoasters.value > gameState.value.freshBeans ||
-      gameState.value.roastedBeans >= maximumRoastedBeans.value
-    )
+    // Calculate how many fresh beans we would use this tick
+    const desiredFreshBeans = freshBeansPerTickForRoasters.value
+
+    // If we don't have enough fresh beans or would exceed roasted beans capacity, return
+    if (desiredFreshBeans > gameState.value.freshBeans) return
+
+    // Calculate how many roasted beans we would produce
+    const potentialRoastedProduced =
+      desiredFreshBeans * (roastedBeansPerRoast.value / freshBeansForRoast.value)
+
+    // Check if adding the roasted beans would exceed maximum
+    if (gameState.value.roastedBeans + potentialRoastedProduced > maximumRoastedBeans.value) {
+      // Calculate the maximum amount we can produce without exceeding capacity
+      const maxRoastedToAdd = maximumRoastedBeans.value - gameState.value.roastedBeans
+      // Calculate the corresponding fresh beans to use
+      const freshBeansToUse =
+        maxRoastedToAdd / (roastedBeansPerRoast.value / freshBeansForRoast.value)
+
+      gameState.value.freshBeans -= freshBeansToUse
+      gameState.value.roastedBeans = maximumRoastedBeans.value
       return
+    }
 
-    const availableFreshBeans = Math.min(
-      freshBeansPerTickForRoasters.value,
-      gameState.value.freshBeans,
-    )
-    const roastedProduced =
-      availableFreshBeans * (roastedBeansPerRoast.value / freshBeansForRoast.value)
-
-    gameState.value.freshBeans -= availableFreshBeans
-    gameState.value.roastedBeans = Math.min(
-      gameState.value.roastedBeans + roastedProduced,
-      maximumRoastedBeans.value,
-    )
+    // Otherwise process normally
+    gameState.value.freshBeans -= desiredFreshBeans
+    gameState.value.roastedBeans += potentialRoastedProduced
   }
 
   // Auto Brewer automation
@@ -476,24 +492,31 @@ export const useGameStore = defineStore('game', () => {
     gameState.value.autoBrewers += 1
   }
   function autoBrewerTick() {
-    if (
-      roastedBeansPerTickForBrewers.value > gameState.value.roastedBeans ||
-      gameState.value.coffeeCups >= maximumCoffeeCups.value
-    )
+    // Calculate how many roasted beans we would use this tick
+    const desiredRoastedBeans = roastedBeansPerTickForBrewers.value
+
+    // If we don't have enough roasted beans, return
+    if (desiredRoastedBeans > gameState.value.roastedBeans) return
+
+    // Calculate how many coffee cups we would produce
+    const potentialCoffeeCupsProduced =
+      desiredRoastedBeans * (coffeeCupsPerBrew.value / roastedBeansForBrew.value)
+
+    // Check if adding the coffee cups would exceed maximum
+    if (gameState.value.coffeeCups + potentialCoffeeCupsProduced > maximumCoffeeCups.value) {
+      // Calculate the maximum amount we can produce without exceeding capacity
+      const maxCupsToAdd = maximumCoffeeCups.value - gameState.value.coffeeCups
+      // Calculate the corresponding roasted beans to use
+      const roastedBeansToUse = maxCupsToAdd / (coffeeCupsPerBrew.value / roastedBeansForBrew.value)
+
+      gameState.value.roastedBeans -= roastedBeansToUse
+      gameState.value.coffeeCups = maximumCoffeeCups.value
       return
+    }
 
-    const availableRoastedBeans = Math.min(
-      roastedBeansPerTickForBrewers.value,
-      gameState.value.roastedBeans,
-    )
-    const coffeeCupsProduced =
-      availableRoastedBeans * (coffeeCupsPerBrew.value / roastedBeansForBrew.value)
-
-    gameState.value.roastedBeans -= availableRoastedBeans
-    gameState.value.coffeeCups = Math.min(
-      gameState.value.coffeeCups + coffeeCupsProduced,
-      maximumCoffeeCups.value,
-    )
+    // Otherwise process normally
+    gameState.value.roastedBeans -= desiredRoastedBeans
+    gameState.value.coffeeCups += potentialCoffeeCupsProduced
   }
 
   // Barista automation
