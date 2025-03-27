@@ -29,10 +29,16 @@ body {
   color: #333;
 }
 
+html,
+body,
+.app {
+  height: 100vh;
+  overflow: hidden;
+}
+
 .app {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
 }
 
 header {
@@ -46,7 +52,7 @@ header {
 main {
   flex: 1;
   padding: 10px;
-  overflow: auto;
+  overflow: hidden;
 }
 
 footer {

@@ -66,6 +66,7 @@ if (typeof window !== 'undefined') {
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   gap: 15px;
   max-width: 1200px;
   margin: 0 auto;
@@ -80,6 +81,7 @@ if (typeof window !== 'undefined') {
   display: flex;
   flex: 1;
   gap: 15px;
+  overflow: auto;
 }
 
 .manual-section {
