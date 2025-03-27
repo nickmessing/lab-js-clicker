@@ -6,11 +6,16 @@ import { useFormattedCurrency } from '@/composables/useFormattedCurrency'
 const gameStore = useGameStore()
 
 const moneyRate = computed(() => {
-  // Money from baristas minus cost from bean buyers
-  return (
-    gameStore.baristaProductionRate -
-    gameStore.beanBuyerProductionRate * gameStore.buyFreshBeansPrice
-  )
+  // Get barista training boost
+  const baristaBoost = 1 + gameStore.getUpgradeEffect('barista_training')
+
+  // Money from baristas with training boost applied
+  const baristaIncome = gameStore.baristaProductionRate * gameStore.moneyPerCoffeeCup * baristaBoost
+
+  // Cost from bean buyers
+  const beanBuyerCost = gameStore.beanBuyerProductionRate * gameStore.buyFreshBeansPrice
+
+  return baristaIncome - beanBuyerCost
 })
 
 const formattedMoneyRate = useFormattedCurrency(moneyRate)
@@ -25,12 +30,19 @@ const freshBeansRate = computed(() => {
 })
 
 const roastedBeansRate = computed(() => {
-  // Roasted beans from roasters minus beans used by brewers
-  return (
-    gameStore.autoRoasterProductionRate -
+  // Roasted beans from roasters
+  const roastedProduction = gameStore.autoRoasterProductionRate
+
+  // Calculate beans used by brewers with efficiency upgrade applied
+  const brewersConsumption =
     gameStore.autoBrewerProductionRate *
-      (gameStore.roastedBeansForBrew / gameStore.coffeeCupsPerBrew)
-  )
+    (gameStore.roastedBeansForBrew / gameStore.coffeeCupsPerBrew)
+
+  // Apply auto-brewer efficiency upgrade
+  const efficiencyReduction = gameStore.getUpgradeEffect('auto_brewer_efficiency')
+  const actualBrewersConsumption = brewersConsumption * (1 - efficiencyReduction)
+
+  return roastedProduction - actualBrewersConsumption
 })
 
 const coffeeCupsRate = computed(() => {
