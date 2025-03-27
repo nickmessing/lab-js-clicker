@@ -32,7 +32,7 @@ body {
 html,
 body,
 .app {
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
