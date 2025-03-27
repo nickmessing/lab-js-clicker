@@ -308,7 +308,7 @@ export const useGameStore = defineStore('game', () => {
   const canBuyFreshBeans = computed(
     () =>
       gameState.value.money >= buyFreshBeansPrice.value &&
-      gameState.value.freshBeans < maximumFreshBeans.value,
+      gameState.value.freshBeans + buyFreshBeansAmount.value <= maximumFreshBeans.value,
   )
   function buyFreshBeans() {
     if (!canBuyFreshBeans.value) return
@@ -323,7 +323,7 @@ export const useGameStore = defineStore('game', () => {
   const canRoastBeans = computed(
     () =>
       gameState.value.freshBeans >= freshBeansForRoast.value &&
-      gameState.value.roastedBeans < maximumRoastedBeans.value,
+      gameState.value.roastedBeans + roastedBeansPerRoast.value <= maximumRoastedBeans.value,
   )
   function roastBeans() {
     if (!canRoastBeans.value) return
@@ -338,7 +338,7 @@ export const useGameStore = defineStore('game', () => {
   const canBrewCoffee = computed(
     () =>
       gameState.value.roastedBeans >= roastedBeansForBrew.value &&
-      gameState.value.coffeeCups < maximumCoffeeCups.value,
+      gameState.value.coffeeCups + coffeeCupsPerBrew.value <= maximumCoffeeCups.value,
   )
   function brewCoffee() {
     if (!canBrewCoffee.value) return
