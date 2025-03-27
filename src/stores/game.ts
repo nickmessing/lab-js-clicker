@@ -251,14 +251,20 @@ const UPGRADES: Upgrade[] = [
 
 export const useGameStore = defineStore('game', () => {
   const initialGameStateString = localStorage.getItem('coffeeGameState')
+  const parsedGameState = JSON.parse(initialGameStateString || '{}')
+  if (!parsedGameState.money) {
+    parsedGameState.money = defaultGameState.money
+  }
   const initialGameState = initialGameStateString
     ? {
         ...defaultGameState,
-        ...JSON.parse(initialGameStateString),
+        ...parsedGameState,
       }
     : (defaultGameState as GameState)
 
   const gameState = ref<GameState>(initialGameState)
+
+  console.log(initialGameState)
 
   useIntervalFn(() => {
     localStorage.setItem('coffeeGameState', JSON.stringify(gameState.value))
@@ -399,6 +405,7 @@ export const useGameStore = defineStore('game', () => {
   }
 
   function beanBuyerTick() {
+    if (gameState.value.beanBuyers === 0) return
     // Don't proceed if we can't afford beans or if adding would exceed capacity
     if (
       freshBeansPerTickPrice.value > gameState.value.money ||
@@ -441,6 +448,7 @@ export const useGameStore = defineStore('game', () => {
     gameState.value.autoRoasters += 1
   }
   function autoRoasterTick() {
+    if (gameState.value.autoRoasters === 0) return
     // Calculate how many fresh beans we would use this tick
     const desiredFreshBeans = freshBeansPerTickForRoasters.value
 
@@ -492,6 +500,7 @@ export const useGameStore = defineStore('game', () => {
     gameState.value.autoBrewers += 1
   }
   function autoBrewerTick() {
+    if (gameState.value.autoBrewers === 0) return
     // Calculate how many roasted beans we would use this tick
     const desiredRoastedBeans = roastedBeansPerTickForBrewers.value
 
@@ -535,6 +544,7 @@ export const useGameStore = defineStore('game', () => {
     gameState.value.baristas += 1
   }
   function baristaTick() {
+    if (gameState.value.baristas === 0) return
     if (coffeeCupsPerTickFromBaristas.value > gameState.value.coffeeCups) return
 
     const availableCoffeeCups = Math.min(
