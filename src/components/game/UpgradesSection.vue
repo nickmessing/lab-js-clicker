@@ -46,7 +46,9 @@ function formatCost(cost: number) {
         <div class="upgrade-info">
           <div class="upgrade-name">{{ upgrade.name }}</div>
           <div class="upgrade-effect">
-            {{ upgrade.formattedNextEffect }}
+            Current: <span class="current-effect">{{ upgrade.formattedEffect }}</span>
+            <span class="arrow">→</span>
+            Next: <span class="next-effect">{{ upgrade.formattedNextEffect }}</span>
           </div>
           <div class="upgrade-level">Level {{ upgrade.level }}</div>
           <div class="upgrade-description">{{ upgrade.description }}</div>
@@ -133,8 +135,25 @@ h2 {
 
 .upgrade-effect {
   font-size: 0.9rem;
+  color: #555;
+  font-weight: normal;
+  line-height: 1.4;
+}
+
+.current-effect {
   color: #388e3c;
   font-weight: bold;
+}
+
+.next-effect {
+  color: #388e3c;
+  font-weight: bold;
+}
+
+.arrow {
+  margin: 0 4px;
+  display: inline-block;
+  color: #8d6e63;
 }
 
 .upgrade-level {
@@ -194,6 +213,16 @@ h2 {
   .tab {
     font-size: 0.8rem;
     padding: 6px 12px;
+  }
+
+  .upgrade-effect {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .arrow {
+    display: none; /* Hide arrow on mobile and use stacked layout instead */
   }
 }
 </style>
